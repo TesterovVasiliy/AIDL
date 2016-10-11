@@ -29,6 +29,8 @@ public class PhoneCallReceiwer extends BroadcastReceiver {
             // Register listener for LISTEN_CALL_STATE
             tmgr.listen(PhoneListener, PhoneStateListener.LISTEN_CALL_STATE);
 
+            this.context = context;
+
         } catch (Exception e) {
             Log.e("Phone Receive Error", " " + e);
         }
@@ -47,7 +49,6 @@ public class PhoneCallReceiwer extends BroadcastReceiver {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, msg, duration);
                 toast.show();
-//15555215554
             }
         }
     }
