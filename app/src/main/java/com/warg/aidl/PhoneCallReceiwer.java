@@ -3,14 +3,22 @@ package com.warg.aidl;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.RemoteException;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.com.android.internal.telephony.ITelephony;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 public class PhoneCallReceiwer extends BroadcastReceiver {
 
     Context context;
+    TelephonyManager tmgr;
+    ITelephony mTelephony;
 
     public PhoneCallReceiwer() {
 
@@ -20,7 +28,7 @@ public class PhoneCallReceiwer extends BroadcastReceiver {
 
         try {
             // TELEPHONY MANAGER class object to register one listner
-            TelephonyManager tmgr = (TelephonyManager) context
+            tmgr = (TelephonyManager) context
                     .getSystemService(Context.TELEPHONY_SERVICE);
 
             //Create Listner
@@ -49,6 +57,20 @@ public class PhoneCallReceiwer extends BroadcastReceiver {
                 int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, msg, duration);
                 toast.show();
+
+                killCall();
+            }
+        }
+
+        private void killCall() {
+            try {
+                Class c = Class.forName(tmgr.getClass().getName());
+                Method m = c.getDeclaredMethod("getITelephony");
+                m.setAccessible(true);
+                mTelephony = ((ITelephony) m.invoke(tmgr, null));
+                mTelephony.endCall();
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | RemoteException e) {
+                e.printStackTrace();
             }
         }
     }
