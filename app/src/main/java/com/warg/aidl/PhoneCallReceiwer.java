@@ -58,16 +58,18 @@ public class PhoneCallReceiwer extends BroadcastReceiver {
                 Toast toast = Toast.makeText(context, msg, duration);
                 toast.show();
 
-                killCall();
+                //killCall();
+                MyIntentService.startActionBaz(context,"param 1","param 2");
             }
         }
 
         private void killCall() {
             try {
+                TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
                 Class c = Class.forName(tmgr.getClass().getName());
                 Method m = c.getDeclaredMethod("getITelephony");
                 m.setAccessible(true);
-                mTelephony = ((ITelephony) m.invoke(tmgr, null));
+                mTelephony = ((ITelephony) m.invoke(tm));
                 mTelephony.endCall();
             } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException | RemoteException e) {
                 e.printStackTrace();
